@@ -1,6 +1,6 @@
 # AWS Services Glossary
 
-A collaborative glossary of AWS services, built by the AWS re/Start with AI bootcamp class. Each day we add new services with definitions, use cases, and notes.
+A collaborative glossary of AWS services, built for the AWS re/Start with AI bootcamp class. Each day we add new services with definitions, use cases, and notes.
 
 ## Features
 
@@ -23,6 +23,6 @@ _To be added._
 
 ## Author
 
-**Jasmina Angelova**
+**Zhasmina Angelova**
 - GitHub: [ZhAngelova](https://github.com/ZhAngelova)
 - LinkedIn: [zhasmina-angelova](https://www.linkedin.com/in/zhasmina-angelova/)
