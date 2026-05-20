@@ -1,0 +1,72 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  AWS Services Glossary — serverless CRUD API for a collaborative glossary of AWS services.
+  Built for the AWS re/Start with AI bootcamp class.
+
+# -----------------------------------------------------------------------------
+# Globals: shared settings applied to every Lambda function in this stack.
+# Avoids repeating the same lines on every function.
+# -----------------------------------------------------------------------------
+Globals:
+  Function:
+    Timeout: 5
+    Runtime: python3.13
+    Architectures:
+      - x86_64
+    LoggingConfig:
+      LogFormat: JSON
+    Environment:
+      Variables:
+        TABLE_NAME: !Ref GlossaryTable
+
+# -----------------------------------------------------------------------------
+# Resources: every AWS thing this stack creates.
+# -----------------------------------------------------------------------------
+Resources:
+
+  # DynamoDB table — stores every AWS service term.
+  # Partition key (serviceName) enforces uniqueness automatically.
+  GlossaryTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: aws-services-glossary
+      BillingMode: PAY_PER_REQUEST  # On-demand pricing — free-tier eligible, no capacity planning.
+      AttributeDefinitions:
+        - AttributeName: serviceName
+          AttributeType: S  # S = String
+      KeySchema:
+        - AttributeName: serviceName
+          KeyType: HASH  # HASH = partition key
+
+  # Lambda function: create a new term.
+  # POST /services with JSON body.
+  CreateTermFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: glossary-create-term
+      CodeUri: functions/create_term/
+      Handler: app.lambda_handler
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref GlossaryTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /services
+            Method: POST
+
+# -----------------------------------------------------------------------------
+# Outputs: values printed after deploy so you can find your resources.
+# -----------------------------------------------------------------------------
+Outputs:
+  ApiUrl:
+    Description: Base URL of the Glossary API
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.${AWS::URLSuffix}/Prod/"
+
+  GlossaryTableName:
+    Description: DynamoDB table name
+    Value: !Ref GlossaryTable
+
+
