@@ -69,7 +69,7 @@ def lambda_handler(event, context):
     if error:
         return _response(400, {"error": error})
 
-    # Normalise the partition key (lowercase, trimmed) — your dedup key
+    # Normalise the partition key (lowercase, trimmed) - your dedup key
     service_name = payload["serviceName"].strip().lower()
 
     # Build the item to store
@@ -85,7 +85,7 @@ def lambda_handler(event, context):
         "updatedAt": now,
     }
 
-    # Conditional write — DynamoDB refuses if serviceName already exists
+    # Conditional write - DynamoDB refuses if serviceName already exists
     try:
         table.put_item(
             Item=item,

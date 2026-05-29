@@ -25,13 +25,13 @@ Globals:
 # -----------------------------------------------------------------------------
 Resources:
 
-  # DynamoDB table — stores every AWS service term.
+  # DynamoDB table - stores every AWS service term.
   # Partition key (serviceName) enforces uniqueness automatically.
   GlossaryTable:
     Type: AWS::DynamoDB::Table
     Properties:
       TableName: aws-services-glossary
-      BillingMode: PAY_PER_REQUEST  # On-demand pricing — free-tier eligible, no capacity planning.
+      BillingMode: PAY_PER_REQUEST  # On-demand pricing - free-tier eligible, no capacity planning.
       AttributeDefinitions:
         - AttributeName: serviceName
           AttributeType: S  # S = String
@@ -39,14 +39,15 @@ Resources:
         - AttributeName: serviceName
           KeyType: HASH  # HASH = partition key
 
+
   # Lambda function: create a new term.
   # POST /services with JSON body.
   CreateTermFunction:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: glossary-create-term
-      CodeUri: functions/create_term/
-      Handler: app.lambda_handler
+      CodeUri: functions/
+      Handler: create_term.lambda_handler
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref GlossaryTable
@@ -57,6 +58,63 @@ Resources:
             Path: /services
             Method: POST
 
+
+# Lambda function: list all terms.
+  # GET /services
+  ListTermsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: glossary-list-terms
+      CodeUri: functions/
+      Handler: list_terms.lambda_handler
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref GlossaryTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /services
+            Method: GET            
+
+
+# Lambda function: update an existing term.
+  # PUT /services/{name}
+  UpdateTermFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: glossary-update-term
+      CodeUri: functions/
+      Handler: update_term.lambda_handler
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref GlossaryTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /services/{name}
+            Method: PUT
+
+# Lambda function: delete a term.
+  # DELETE /services/{name}
+  DeleteTermFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: glossary-delete-term
+      CodeUri: functions/
+      Handler: delete_term.lambda_handler
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref GlossaryTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /services/{name}
+            Method: DELETE
+
+            
 # -----------------------------------------------------------------------------
 # Outputs: values printed after deploy so you can find your resources.
 # -----------------------------------------------------------------------------
