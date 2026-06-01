@@ -19,6 +19,12 @@ Globals:
     Environment:
       Variables:
         TABLE_NAME: !Ref GlossaryTable
+  Api:
+    Cors:
+      AllowMethods: "'GET,POST,PUT,DELETE,OPTIONS'"
+      AllowHeaders: "'Content-Type'"
+      AllowOrigin: "'*'"
+
 
 # -----------------------------------------------------------------------------
 # Resources: every AWS thing this stack creates.
@@ -95,6 +101,7 @@ Resources:
           Properties:
             Path: /services/{name}
             Method: PUT
+
 
 # Lambda function: delete a term.
   # DELETE /services/{name}
