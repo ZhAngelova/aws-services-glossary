@@ -112,17 +112,22 @@ Picking the right tools also means rejecting the wrong ones. Here are services I
 
 ## Project Structure
 
+```
 aws-services-glossary/
 ├── README.md
 ├── template.yaml             SAM infrastructure-as-code, defines every AWS resource
 ├── samconfig.toml             Saved sam deploy settings, auto-generated on first deploy
 ├── .gitignore
 └── functions/
-├── create_term.py        POST /services
-├── list_terms.py         GET /services
-├── update_term.py        PUT /services/{name}
-├── delete_term.py        DELETE /services/{name}
-└── requirements.txt      Empty: boto3 is bundled in the Lambda runtime
+    ├── create_term.py        POST /services
+    ├── list_terms.py         GET /services
+    ├── update_term.py        PUT /services/{name}
+    ├── delete_term.py        DELETE /services/{name}
+    └── requirements.txt      Empty: boto3 is bundled in the Lambda runtime
+```
+
+Each Lambda follows the same four-layer code structure: Imports, Constants and clients, Helpers, Handler.
+
 
 ## Built With
 
