@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS Services Glossary</title>
+    <link rel="stylesheet" href="style.css">
+    <script defer src="script.js"></script>
+</head>
+<body>
+    <header class="site-header">
+        <h1>AWS Services Glossary</h1>
+        <p class="tagline">A collaborative glossary of AWS services, built for the AWS re/Start with AI bootcamp class.</p>
+    </header>
+
+    <main>
+        <!-- Add / edit form, hidden by default -->
+        <section class="form-section">
+            <button id="toggle-form-btn" type="button" class="primary-btn">Add a new term</button>
+
+            <form id="term-form" class="term-form hidden" novalidate>
+                <h2 id="form-title">Add a new term</h2>
+
+                <div class="form-row">
+                    <label for="serviceName">Service name (lowercase, used as the ID)</label>
+                    <input type="text" id="serviceName" name="serviceName" required maxlength="50" placeholder="e.g. ec2">
+                </div>
+
+                <div class="form-row">
+                    <label for="displayName">Display name</label>
+                    <input type="text" id="displayName" name="displayName" required placeholder="e.g. Amazon EC2">
+                </div>
+
+                <div class="form-row">
+                    <label for="description">Description</label>
+                    <textarea id="description" name="description" required rows="3" placeholder="What does this service do?"></textarea>
+                </div>
+
+                <div class="form-row">
+                    <label for="category">Category</label>
+                    <input type="text" id="category" name="category" placeholder="e.g. Compute, Storage, AI/ML">
+                </div>
+
+                <div class="form-row">
+                    <label for="useCases">Use cases (comma-separated)</label>
+                    <input type="text" id="useCases" name="useCases" placeholder="e.g. Web hosting, batch processing">
+                </div>
+
+                <div id="form-message" class="form-message" role="alert"></div>
+
+                <div class="form-actions">
+                    <button type="submit" id="submit-btn" class="primary-btn">Save term</button>
+                    <button type="button" id="cancel-btn" class="secondary-btn">Cancel</button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Search and category filters -->
+        <section class="filters">
+            <input type="search" id="search-input" class="search-input" placeholder="Search by name or description...">
+            <div id="category-filters" class="category-filters" role="group" aria-label="Filter by category">
+                <button type="button" class="category-btn active" data-category="">All</button>
+                <!-- Category buttons are added by script.js based on the loaded data -->
+            </div>
+        </section>
+
+        <!-- Status / count line -->
+        <p id="results-summary" class="results-summary"></p>
+
+        <!-- Terms list rendered by JS -->
+        <section id="terms-list" class="terms-list" aria-live="polite"></section>
+    </main>
+
+    <footer class="site-footer">
+        <p>Built by Zhasmina Angelova &middot; <a href="https://github.com/ZhAngelova/aws-services-glossary" target="_blank" rel="noopener">View source</a></p>
+    </footer>
+</body>
+</html>
