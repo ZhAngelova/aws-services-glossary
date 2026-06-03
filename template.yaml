@@ -121,6 +121,7 @@ Resources:
             Path: /services/{name}
             Method: DELETE
 
+
   # S3 bucket for hosting the frontend static website
   FrontendBucket:
     Type: AWS::S3::Bucket
@@ -134,6 +135,7 @@ Resources:
         BlockPublicPolicy: false
         IgnorePublicAcls: false
         RestrictPublicBuckets: false
+
 
   # Bucket policy allowing public read access to website files
   FrontendBucketPolicy:
@@ -150,8 +152,40 @@ Resources:
             Resource: !Sub "${FrontendBucket.Arn}/*"
 
 
+  # CloudFront distribution for HTTPS and global content delivery
+  FrontendDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        Comment: "CDN for the AWS Services Glossary frontend"
+        DefaultRootObject: index.html
+        PriceClass: PriceClass_100
+        Origins:
+          - Id: S3WebsiteOrigin
+            DomainName: !Select [2, !Split ["/", !GetAtt FrontendBucket.WebsiteURL]]
+            CustomOriginConfig:
+              OriginProtocolPolicy: http-only
+              HTTPPort: 80
+              HTTPSPort: 443
+        DefaultCacheBehavior:
+          TargetOriginId: S3WebsiteOrigin
+          ViewerProtocolPolicy: redirect-to-https
+          AllowedMethods:
+            - GET
+            - HEAD
+          CachedMethods:
+            - GET
+            - HEAD
+          ForwardedValues:
+            QueryString: false
+            Cookies:
+              Forward: none
+        ViewerCertificate:
+          CloudFrontDefaultCertificate: true          
 
-            
+  
+
 # -----------------------------------------------------------------------------
 # Outputs: values printed after deploy so you can find your resources.
 # -----------------------------------------------------------------------------
@@ -159,17 +193,23 @@ Outputs:
   ApiUrl:
     Description: Base URL of the Glossary API
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.${AWS::URLSuffix}/Prod/"
+     
 
   GlossaryTableName:
     Description: DynamoDB table name
     Value: !Ref GlossaryTable
 
+
   FrontendBucketName:
     Description: "Name of the frontend hosting bucket"
     Value: !Ref FrontendBucket
+
 
   FrontendWebsiteUrl:
     Description: "URL of the static website hosted on S3"
     Value: !Sub "http://${FrontendBucket}.s3-website.${AWS::Region}.amazonaws.com"  
 
 
+  CloudFrontUrl:
+    Description: "HTTPS URL of the site served via CloudFront"
+    Value: !Sub "https://${FrontendDistribution.DomainName}"
