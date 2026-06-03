@@ -121,6 +121,36 @@ Resources:
             Path: /services/{name}
             Method: DELETE
 
+  # S3 bucket for hosting the frontend static website
+  FrontendBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: zhasmina-aws-glossary
+      WebsiteConfiguration:
+        IndexDocument: index.html
+        ErrorDocument: index.html
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
+
+  # Bucket policy allowing public read access to website files
+  FrontendBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref FrontendBucket
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: PublicReadGetObject
+            Effect: Allow
+            Principal: "*"
+            Action: "s3:GetObject"
+            Resource: !Sub "${FrontendBucket.Arn}/*"
+
+
+
             
 # -----------------------------------------------------------------------------
 # Outputs: values printed after deploy so you can find your resources.
@@ -133,5 +163,13 @@ Outputs:
   GlossaryTableName:
     Description: DynamoDB table name
     Value: !Ref GlossaryTable
+
+  FrontendBucketName:
+    Description: "Name of the frontend hosting bucket"
+    Value: !Ref FrontendBucket
+
+  FrontendWebsiteUrl:
+    Description: "URL of the static website hosted on S3"
+    Value: !Sub "http://${FrontendBucket}.s3-website.${AWS::Region}.amazonaws.com"  
 
 
