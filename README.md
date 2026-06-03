@@ -3,6 +3,14 @@
 I decided to build a collaborative glossary of AWS services, built for the AWS re/Start with AI bootcamp class. Each day we recall and add services and their short description.
 
 
+## Live Demo
+
+- **Website:** https://dc3zozoxhuvs3.cloudfront.net
+- **API base URL:** https://b16zplto5k.execute-api.eu-west-2.amazonaws.com/Prod/
+
+The frontend is hosted on S3 and served over HTTPS through CloudFront. The API runs on Lambda and API Gateway, with data stored in DynamoDB. The entire stack is defined as infrastructure as code with AWS SAM.
+
+
 ## Who This Is For
 
 This project doubles as a learning resource for anyone new to AWS- particularly bootcamp students and self-taught beginners. The **Why This Stack** section below explains the reasoning behind every technology choice, so you can understand not just *what* was built but *why*. The `template.yaml` and Lambda functions are designed to be readable and reusable as a reference for your own first serverless app.
@@ -23,6 +31,28 @@ The architecture was chosen with four priorities, in order:
 2. **Cost**- must run at $0 within the AWS Free Tier at this scale.
 3. **Portfolio relevance**- services that are common in junior cloud and DevOps roles.
 4. **Educational value**- readable code and clear reasoning for other learners.
+
+
+## Architecture
+
+```mermaid
+flowchart TD
+    User([User's Browser])
+
+    User -->|HTTPS| CF[CloudFront CDN]
+    CF -->|HTTP| S3[(S3 Bucket<br/>index.html, style.css, script.js)]
+
+    User -->|HTTPS API calls| APIGW[API Gateway]
+    APIGW --> Create[Lambda: create_term]
+    APIGW --> List[Lambda: list_terms]
+    APIGW --> Update[Lambda: update_term]
+    APIGW --> Delete[Lambda: delete_term]
+
+    Create --> DDB[(DynamoDB<br/>aws-services-glossary)]
+    List --> DDB
+    Update --> DDB
+    Delete --> DDB
+```
 
 
 ## Live API
