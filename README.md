@@ -6,7 +6,7 @@ I decided to build a collaborative glossary of AWS services, built for the AWS r
 ## Live Demo
 
 - **Website:** https://dc3zozoxhuvs3.cloudfront.net
-- **API base URL:** https://b16zplto5k.execute-api.eu-west-2.amazonaws.com/Prod/
+- **API base URL:** https://b16zplto5k.execute-api.eu-west-2.amazonaws.com/Prod/services
 
 The frontend is hosted on S3 and served over HTTPS through CloudFront. The API runs on Lambda and API Gateway, with data stored in DynamoDB. The entire stack is defined as infrastructure as code with AWS SAM.
 
